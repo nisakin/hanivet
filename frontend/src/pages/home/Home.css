@@ -1,0 +1,82 @@
+.home-wrapper {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+
+  background: url("/images/paw.webp") no-repeat center center;
+  background-size: cover;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-top: 80px; /* 🔥 HEADER FIX */
+  box-sizing: border-box;
+}
+
+/* karartma overlay (PRO görünümün sırrı) */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* içerik */
+.hero {
+  position: relative;
+  max-width: 800px;
+  text-align: center;
+  color: white;
+  padding: 20px;
+}
+
+.hero h1 {
+  font-size: 42px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.hero p {
+  font-size: 18px;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+/* BUTTON AREA */
+.hero-buttons {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* PRIMARY BUTTON */
+.primary-btn {
+  background: #2bb673;
+  border: none;
+  padding: 12px 18px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.primary-btn:hover {
+  background: #239a5f;
+}
+
+/* SECONDARY BUTTON */
+.secondary-btn {
+  background: transparent;
+  border: 1px solid white;
+  padding: 12px 18px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.secondary-btn:hover {
+  background: white;
+  color: black;
+}

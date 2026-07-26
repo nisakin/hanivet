@@ -1,0 +1,61 @@
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url("/images/loginpage.jpg") no-repeat center center;
+  background-size: cover;
+  height: 100vh; /* vh = vievport height. tam ekran tasarımlar için ideal .ekran boyutunun tamamı. */
+  font-family: Arial, sans-serif;
+}
+
+.login-box {
+  backdrop-filter: blur(20px);
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 350px;
+}
+
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #967e76;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #030202;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.input-group input:focus {
+  border-color: #ec7e3a3c;
+  outline: none;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #b3a492;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background: #967e76;
+}

@@ -1,0 +1,6 @@
+@hanivet_backend_HostAddress = http://localhost:5252
+
+GET {{hanivet_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
