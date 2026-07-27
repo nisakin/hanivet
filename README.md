@@ -67,3 +67,5 @@ npm run dev
 🚧 Actively under development.
 
 ## Developer
+
+Nisa Akın — [GitHub](https://github.com/nisakin)
