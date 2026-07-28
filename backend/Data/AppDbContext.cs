@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using hanivet_backend.Models;
+using hanivet_backend.Entities;
  
  namespace hanivet_backend.Data;
  public class AppDbContext : DbContext

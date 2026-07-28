@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-namespace hanivet_backend.Models;
+namespace hanivet_backend.Entities;
 //Db tablolarım burada yer alıyor.
 
     public enum UserRole
