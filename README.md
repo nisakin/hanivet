@@ -66,6 +66,18 @@ npm run dev
 
 🚧 Actively under development.
 
+**Completed:**
+
+- Database schema with User, PetOwner, Pet, and Clinic entities (Code First, EF Core)
+- Entity relationships (1-1 and 1-many) configured via Fluent API
+- User registration endpoint with BCrypt password hashing
+- JWT authentication middleware configured
+
+**In progress:**
+
+- Login endpoint with JWT token generation
+- Frontend-backend integration for authentication
+
 ## Developer
 
 Nisa Akın — [GitHub](https://github.com/nisakin)
