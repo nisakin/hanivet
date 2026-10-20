@@ -7,7 +7,13 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 //Controller Desteği. Controler classlarını aktif eder.Yani api/user gibi endpointler çalışır.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+.AddJsonOptions( options => 
+{
+    options.JsonSerializerOptions.Converters.Add(
+        new System.Text.Json.Serialization.JsonStringEnumConverter());
+
+});
 
 //EF Core + SQL Server Bağlantısı
 builder.Services.AddDbContext<AppDbContext>(options =>
