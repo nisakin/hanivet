@@ -7,6 +7,7 @@ using System.Text;
 using hanivet_backend.Data;
 using hanivet_backend.DTOs;
 using hanivet_backend.Entities;
+using hanivet_backend.Messages;
 
 namespace hanivet_backend.Controllers;
 
@@ -29,7 +30,7 @@ public class AuthController : ControllerBase
         bool emailExists = await _context.Users.AnyAsync(u => u.Email == request.Email);
         if (emailExists)
         {
-            return BadRequest("Bu email adresi zaten kayıtlı.");
+            return BadRequest(ErrorMessages.EmailAlreadyExists);
         }
 
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
@@ -53,11 +54,11 @@ public class AuthController : ControllerBase
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password , user.PasswordHash))
 {
-    return Unauthorized("Email veya şifre hatalı.");
+    return Unauthorized(ErrorMessages.InvalidCredentials);
 }
 if (request.ExpectedRole.HasValue && user.Role != request.ExpectedRole.Value)
 {
-    return BadRequest("Bu hesap türü için farklı bir giriş sayfası kullanmalısınız.");
+    return BadRequest(ErrorMessages.WrongLoginPage);
 }
 string token = GenerateJwtToken(user);
 
