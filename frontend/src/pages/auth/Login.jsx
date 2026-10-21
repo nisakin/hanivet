@@ -1,27 +1,51 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import "./Login.css"; // CSS dosyasıyla birlikte kullanılacak
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../../services/api";
+import "./Login.css";
 
 function Login() {
-  const { role } = useParams(); // URL den kullanici yada klinik gelecek.
-  const baslik = role === "klinik" ? "Klinik Girişi " : "Kullanıcı Girişi";
-  const expectedRole = role === "klinik" ? "Clinic" : " PetOwner";
+  const { role } = useParams(); // user or clinic from the URL
+  const navigate = useNavigate();
+
+  const isClinic = role === "clinic";
+  const baslik = isClinic ? "Klinik Girişi " : "Kullanıcı Girişi";
+  const expectedRole = isClinic ? "Clinic" : "PetOwner";
+
   const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     if (!form.email || !form.password) {
-      alert("Lütfen tüm alanları doldurun");
+      setError("Lütfen tüm alanları doldurun");
       return;
     }
 
-    console.log("Giriş bilgileri:", { form, expectedRole });
-    // Buraya backend çağrısı eklenebilir
+    try {
+      const response = await api.post("/Auth/login", {
+        email: form.email,
+        password: form.password,
+        expectedRole,
+      });
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("role", response.data.role);
+      localStorage.setItem("username", response.data.username);
+
+      navigate("/");
+    } catch (err) {
+      const data = err.response?.data;
+      setError(
+        typeof data == "string"
+          ? data
+          : "Giriş başarısız. Lütfen tekrar deneyin."
+      );
+    }
   };
 
   return (
@@ -50,6 +74,8 @@ function Login() {
               onChange={handleChange}
             />
           </div>
+
+          {error && <p className="form-error">{error}</p>}
 
           <button type="submit" className="login-btn">
             Giriş Yap
