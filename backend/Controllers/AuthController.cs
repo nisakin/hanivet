@@ -27,6 +27,19 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
+        if (request.Role == UserRole.Clinic && string.IsNullOrWhiteSpace(request.ClinicName))
+{
+    return BadRequest(ErrorMessages.ClinicNameRequired);
+
+}
+        if (request.Role == UserRole.PetOwner && string.IsNullOrWhiteSpace(request.Username))
+        {
+            return BadRequest(ErrorMessages.UsernameRequired);
+
+        }
+
+
+
         bool emailExists = await _context.Users.AnyAsync(u => u.Email == request.Email);
         if (emailExists)
         {
@@ -37,11 +50,20 @@ public class AuthController : ControllerBase
 
         var user = new User
         {
-            Username = request.Username,
             Email = request.Email,
             PasswordHash = passwordHash,
             Role = request.Role
         };
+        if (request.Role == UserRole.Clinic)
+        {
+            user.Clinic = new Clinic { ClinicName = request.ClinicName! };
+
+        }
+        else 
+        {
+            user.Username = request.Username;
+            user.PetOwner = new PetOwner();
+        }
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
@@ -51,7 +73,9 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var user = await _context.Users
+        .Include(u => u.Clinic)
+        .FirstOrDefaultAsync(u => u.Email == request.Email);
 if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password , user.PasswordHash))
 {
     return Unauthorized(ErrorMessages.InvalidCredentials);
@@ -60,17 +84,18 @@ if (request.ExpectedRole.HasValue && user.Role != request.ExpectedRole.Value)
 {
     return BadRequest(ErrorMessages.WrongLoginPage);
 }
-string token = GenerateJwtToken(user);
+string displayName = user.Clinic?.ClinicName ?? user.Username ?? user.Email;
+string token = GenerateJwtToken(user, displayName);
 
 return Ok (new
 {
     token,
     role = user.Role.ToString(),
-    username = user.Username
+    username = displayName
 });
 
     }
-    private string GenerateJwtToken(User user)
+    private string GenerateJwtToken(User user, string displayName)
     {
         var jwtKey = _configuration["Jwt:Key"]!;
         var jwtIssuer = _configuration["Jwt:Issuer"]!;
@@ -80,7 +105,7 @@ return Ok (new
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier , user.Id.ToString()),
-            new Claim(ClaimTypes.Name , user.Username),
+            new Claim(ClaimTypes.Name , displayName),
             new Claim(ClaimTypes.Email , user.Email),
             new Claim(ClaimTypes.Role , user.Role.ToString())
         };
