@@ -10,9 +10,9 @@ namespace hanivet_backend.Entities;
 public class User{
 [Key]
     public int Id {get; set;}
-[Required]// Data Annotation 
+
 [StringLength(30)] // Data Annotation .... Çalışması için namespace eklendi.
-public required string Username{get;set;}
+public string? Username{get;set;}
 
 [Required]
 [EmailAddress] // mail formatını kontrol eder.Geçersiz mail kaydedilmesini engeller.
@@ -29,8 +29,8 @@ public required string PasswordHash {get ;set;}
 
 
 //Navigation Property  - bir kullanıcı ya PetOwner ya da Clinic olacak.
- public PetOwner? PetOwner {get;set;}
- public Clinic? Clinic{get;set;}
+ public PetOwner? PetOwner { get; set;}
+ public Clinic? Clinic { get; set;}
  
 
 

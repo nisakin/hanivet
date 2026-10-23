@@ -31,7 +31,6 @@ namespace hanivet_backend.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -154,7 +153,6 @@ namespace hanivet_backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
