@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../../services/api";
 import "./Register.css";
 
 function Register() {
-  const { role } = useParams();
-  const isClinic = role === "clinic";
+  const { role } = useParams(); // user or clinic from the URL
+  const navigate = useNavigate();
 
+  const isClinic = role === "clinic";
   const baslik = isClinic ? "Klinik Kaydı" : "Kullanıcı Kaydı";
 
   const [form, setForm] = useState({
@@ -14,28 +16,33 @@ function Register() {
     password: "",
     confirm: "",
     clinicName: "",
-    address: "",
   });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!isClinic && !form.username) {
-      alert("Lütfen kullanıcı adını girin");
-      return;
-    }
+    setError("");
 
     if (!form.email || !form.password || !form.confirm) {
-      alert("Lütfen tüm alanları doldurun");
+      setError("Lütfen tüm alanları doldurun");
       return;
     }
 
-    if (isClinic && (!form.clinicName || !form.address)) {
-      alert("Lütfen klinik bilgilerini doldurun");
+    if (isClinic && !form.clinicName) {
+      setError("Lütfen klinik adını girin");
+      return;
+    }
+
+    if (!isClinic && !form.username) {
+      setError("Lütfen kullanıcı adını girin");
+      return;
+    }
+    if (form.password.length < 6) {
+      setError("Şifre en az 6 karakter olmalıdır");
       return;
     }
 
@@ -44,8 +51,25 @@ function Register() {
       return;
     }
 
-    const expectedRole = isClinic ? "Clinic" : "PetOwner";
-    console.log("Kayıt bilgileri:", { ...form, expectedRole });
+    try {
+      await api.post("/Auth/register", {
+        email: form.email,
+        password: form.password,
+        role: isClinic ? "Clinic" : "PetOwner",
+        ...(isClinic
+          ? { clinicName: form.clinicName }
+          : { username: form.username }),
+      });
+
+      navigate(`/login/${role}`);
+    } catch (err) {
+      const data = err.response?.data;
+      setError(
+        typeof data === "string"
+          ? data
+          : "Kayıt başarısız. Lütfen tekrar deneyin."
+      );
+    }
   };
 
   return (
@@ -53,7 +77,17 @@ function Register() {
       <div className="register-box">
         <h2>{baslik}</h2>
         <form onSubmit={handleSubmit}>
-          {!isClinic && (
+          {isClinic ? (
+            <div className="input-group">
+              <label>Klinik Adı</label>
+              <input
+                type="text"
+                name="clinicName"
+                value={form.clinicName}
+                onChange={handleChange}
+              />
+            </div>
+          ) : (
             <div className="input-group">
               <label>Kullanıcı Adı</label>
               <input
@@ -75,30 +109,6 @@ function Register() {
             />
           </div>
 
-          {isClinic && (
-            <>
-              <div className="input-group">
-                <label>Klinik Adı</label>
-                <input
-                  type="text"
-                  name="clinicName"
-                  value={form.clinicName}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Adres</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={form.address}
-                  onChange={handleChange}
-                />
-              </div>
-            </>
-          )}
-
           <div className="input-group">
             <label>Şifre</label>
             <input
@@ -118,6 +128,8 @@ function Register() {
               onChange={handleChange}
             />
           </div>
+
+          {error && <p className="form-error">{error}</p>}
 
           <button type="submit" className="register-btn">
             Kayıt Ol
