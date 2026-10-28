@@ -19,20 +19,22 @@ A full-stack web platform connecting pet owners with trusted veterinary clinics.
 - React
 - Vite
 - React Router
+- Axios
 
 **Backend**
 
-- C# / ASP.NET Core
-- Entity Framework Core
+- C# / ASP.NET Core Web API
+- Entity Framework Core (Code First)
 - MSSQL (running in Docker, managed with Azure Data Studio)
+- JWT Bearer authentication
+- BCrypt for password hashing
+- Swagger for API testing
 
 ## Project Structure
 
-```
 hanivet/
-├── frontend/          React + Vite application
-└── backend/           ASP.NET Core Web API
-```
+├── frontend/ React + Vite application
+└── backend/ ASP.NET Core Web API
 
 ## Prerequisites
 
@@ -49,10 +51,13 @@ hanivet/
 ```bash
 cd backend
 cp appsettings.Example.json appsettings.json
-# update the connection string in appsettings.json for your environment
+# In appsettings.json, set your database connection string and a Jwt:Key
+# (at least 32 characters, e.g. generated with: openssl rand -base64 32)
 dotnet ef database update
 dotnet run
 ```
+
+The API runs at `http://localhost:5252` and Swagger is available at `/swagger`.
 
 ### Frontend
 
@@ -62,21 +67,25 @@ npm install
 npm run dev
 ```
 
+The frontend expects the API at `http://localhost:5252` (see `src/services/api.js`).
+
 ## Status
 
 🚧 Actively under development.
 
 **Completed:**
 
-- Database schema with User, PetOwner, Pet, and Clinic entities (Code First, EF Core)
+- Database schema with User, PetOwner, Pet, and Clinic entities (Code First, EF Core migrations)
 - Entity relationships (1-1 and 1-many) configured via Fluent API
-- User registration endpoint with BCrypt password hashing
-- JWT authentication middleware configured
+- Registration endpoint with BCrypt password hashing; creates the matching PetOwner or Clinic profile in the same transaction
+- Login endpoint with JWT token generation and role check
+- Centralized error messages
+- Frontend login and registration pages connected to the API with Axios
 
 **In progress:**
 
-- Login endpoint with JWT token generation
-- Frontend-backend integration for authentication
+- Auth-aware navigation and pet owner profile page
+- Clinic information page (address, phone) completed after first login
 
 ## Developer
 
